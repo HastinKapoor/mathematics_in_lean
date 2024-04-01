@@ -68,8 +68,8 @@ example : min a b + c = min (a + c) (b + c) := by
 
 #check (abs_add : ∀ a b : ℝ, |a + b| ≤ |a| + |b|)
 
-example : |a| - |b| ≤ |a - b| :=
-  sorry
+example : |a| - |b| ≤ |a - b| := by
+  exact abs_sub_abs_le_abs_sub a b
 end
 
 section
