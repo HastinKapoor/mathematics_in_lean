@@ -46,7 +46,25 @@ example : max a b = max b a := by
     apply le_max_left
 
 example : min (min a b) c = min a (min b c) := by
-  sorry
+  apply le_antisymm
+  apply le_min
+  apply le_trans
+  apply min_le_left
+  apply min_le_left
+  apply le_min
+  apply le_trans
+  apply min_le_left
+  apply min_le_right
+  apply min_le_right
+  apply le_min
+  apply le_min
+  apply min_le_left
+  apply le_trans
+  apply min_le_right
+  apply min_le_left
+  apply le_trans
+  apply min_le_right
+  apply min_le_right
 
 theorem aux : min a b + c ≤ min (a + c) (b + c) := by
   apply le_min
@@ -98,5 +116,10 @@ variable (m n : ℕ)
 #check (Nat.lcm_zero_left n : Nat.lcm 0 n = 0)
 
 example : Nat.gcd m n = Nat.gcd n m := by
-  sorry
+  -- exact Nat.gcd_comm m n
+  apply Nat.dvd_antisymm
+  repeat
+    apply dvd_gcd
+    apply gcd_dvd_right
+    apply gcd_dvd_left
 end
