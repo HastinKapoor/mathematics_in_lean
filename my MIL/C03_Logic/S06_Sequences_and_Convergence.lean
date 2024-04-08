@@ -35,7 +35,16 @@ theorem convergesTo_add {s t : ℕ → ℝ} {a b : ℝ}
   rcases cs (ε / 2) ε2pos with ⟨Ns, hs⟩
   rcases ct (ε / 2) ε2pos with ⟨Nt, ht⟩
   use max Ns Nt
-  sorry
+  intro n hn
+  have ngeNs : n ≥ Ns := le_of_max_le_left hn
+  have ngeNt : n ≥ Nt := le_of_max_le_right hn
+  calc
+    |s n + t n - (a + b)| = |s n - a + (t n - b)| := by
+      congr
+      ring
+    _ ≤ |s n - a| + |t n - b| := (abs_add _ _)
+    _ < ε / 2 + ε / 2 := (add_lt_add (hs n ngeNs) (ht n ngeNt))
+    _ = ε := by norm_num
 
 theorem convergesTo_mul_const {s : ℕ → ℝ} {a : ℝ} (c : ℝ) (cs : ConvergesTo s a) :
     ConvergesTo (fun n ↦ c * s n) (c * a) := by
@@ -46,7 +55,16 @@ theorem convergesTo_mul_const {s : ℕ → ℝ} {a : ℝ} (c : ℝ) (cs : Conver
     rw [h]
     ring
   have acpos : 0 < |c| := abs_pos.mpr h
-  sorry
+  intro ε εpos
+  dsimp
+  have εcpos : 0 < ε / |c| := by apply div_pos εpos acpos
+  rcases cs (ε / |c|) εcpos with ⟨Ns, hs⟩
+  use Ns
+  intro n ngt
+  calc
+    |c * s n - c * a| = |c| * |s n - a| := by rw [← abs_mul, mul_sub]
+    _ < |c| * (ε / |c|) := (mul_lt_mul_of_pos_left (hs n ngt) acpos)
+    _ = ε := mul_div_cancel' _ (ne_of_lt acpos).symm
 
 theorem exists_abs_le_of_convergesTo {s : ℕ → ℝ} {a : ℝ} (cs : ConvergesTo s a) :
     ∃ N b, ∀ n, N ≤ n → |s n| < b := by
@@ -100,4 +118,3 @@ def ConvergesTo' (s : α → ℝ) (a : ℝ) :=
   ∀ ε > 0, ∃ N, ∀ n ≥ N, |s n - a| < ε
 
 end
-
